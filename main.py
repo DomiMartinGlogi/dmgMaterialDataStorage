@@ -1,6 +1,8 @@
 #Created by DomiMartinGlogi
 #E-Mail:
 
+import json
+from pathlib import Path
 
 #Todo:
 #Menu System
@@ -41,11 +43,19 @@ def newMat():
     matType = input("Material Type: ")
     lotNr = int(input("LotNr: "))
     amount = int(input("Amount in kg: "))
-    mainDatabase[name] = {"Type" : matType , "LotNr" : lotNr , "Amount" : amount}
-    print(mainDatabase[name])
+    colour = input("Colour: ")
+    newFileName = "materials/" + name + ".json"
+    mainDatabase[name] = {"File" : newFileName}
+    newDB = {"Name" : name , "Type" : matType , "LotNr" : lotNr , "Colour" : colour , "Amount" : amount}
+    file = open(newFileName , "w")
+    json.dump(newDB, file, indent=1)
+    file.flush()
+    file.close()
     menu()
 
-with open("Material.json") as database:
-    mainDatabase = json.load(database)
+file2load = Path("Material.json")
+if file2load.exists() :
+    with open("Material.json") as database:
+        mainDatabase = json.load(database)
 print("Welcome to dmgMaterialData&Storage!")
 menu()
