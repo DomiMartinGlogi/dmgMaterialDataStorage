@@ -18,6 +18,8 @@ def menu():
     print("Menu:")
     print("1 : Save current Session")
     print("2 : Define new Material")
+    print("3 : Search for Material")
+    print("4 : Check Material Data")
     rawIn = input("Selection: ")
     intIn = int(rawIn)
     #Implement all Menu items here!
@@ -25,6 +27,10 @@ def menu():
         save()
     elif intIn == 2:
         newMat()
+    elif intIn == 3:
+        searchMat()
+    elif intIn == 4:
+        checkMat()
     else:
         print("Invalid Input!")
         menu()
@@ -37,6 +43,22 @@ def save():
     file.close()
     menu()
 
+def searchMat():
+    SearchKey = input("Search for: ")
+    Result = dict(filter(lambda item: SearchKey in item[0], mainDatabase.items()))
+    print("Results: " + str(Result))
+    menu()
+
+def checkMat():
+    material = input("Name: ")
+    if not material in mainDatabase:
+        print("Material not in Database!")
+        menu()
+    file = mainDatabase[material]["File"]
+    file = open(file , "r")
+    subdict = json.load(file)
+    print(subdict)
+    menu()
 
 def newMat():
     name = input("Name: ")
@@ -46,7 +68,7 @@ def newMat():
     colour = input("Colour: ")
     newFileName = "materials/" + name + ".json"
     mainDatabase[name] = {"File" : newFileName}
-    newDB = {"Name" : name , "Type" : matType , "LotNr" : lotNr , "Colour" : colour , "Amount" : amount}
+    newDB = {"Type" : matType , "LotNr" : lotNr , "Colour" : colour , "Amount" : amount}
     file = open(newFileName , "w")
     json.dump(newDB, file, indent=1)
     file.flush()
