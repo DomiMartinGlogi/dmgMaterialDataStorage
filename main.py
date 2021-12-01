@@ -38,7 +38,7 @@ def menu():
 def save():
     Data = mainDatabase
     file = open("Material.json", "w")
-    json.dump(Data, file, indent=1)
+    json.dump(Data, file, indent = 1)
     file.flush()
     file.close()
     menu()
@@ -72,14 +72,18 @@ def newMat():
         matDB = {}
         matDB[lotNr] = {"Type": matType, "Colour": colour, "Amount": amount}
         file = open(newFileName, "w")
-        json.dump(matDB, file, indent=1)
+        json.dump(matDB, file, indent = 1)
         file.flush()
         file.close()
-    if name in mainDatabase:
-        file = mainDatabase[name]["file"]
-        file = open(file,"a")
-        matDB = json.load(file)
-        print(matDB)
+    else:
+        file = mainDatabase[name]["File"]
+        with open(file) as tempDB:
+            matDB = json.load(tempDB)
+        matDB[lotNr] = {"Type": matType, "Colour": colour, "Amount": amount}
+        file = open(file, "w")
+        json.dump(matDB, file, indent = 1)
+        file.flush()
+        file.close()
     menu()
 
 file2load = Path("Material.json")
