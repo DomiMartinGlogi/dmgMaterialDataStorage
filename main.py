@@ -66,13 +66,20 @@ def newMat():
     lotNr = int(input("LotNr: "))
     amount = int(input("Amount in kg: "))
     colour = input("Colour: ")
-    newFileName = "materials/" + name + ".json"
-    mainDatabase[name] = {"File" : newFileName}
-    newDB = {"Type" : matType , "LotNr" : lotNr , "Colour" : colour , "Amount" : amount}
-    file = open(newFileName , "w")
-    json.dump(newDB, file, indent=1)
-    file.flush()
-    file.close()
+    if not name in mainDatabase:
+        newFileName = "materials/" + name + ".json"
+        mainDatabase[name] = {"File": newFileName}
+        matDB = {}
+        matDB[lotNr] = "Type": matType, "Colour": colour, "Amount": amount
+        file = open(newFileName, "w")
+        json.dump(newDB, file, indent=1)
+        file.flush()
+        file.close()
+    if name in mainDatabase:
+        file = mainDatabase[name]["file"]
+        file = open(file,"a")
+        matDB = json.load(file)
+        print(matDB)
     menu()
 
 file2load = Path("Material.json")
