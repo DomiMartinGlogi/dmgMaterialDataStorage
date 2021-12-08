@@ -14,12 +14,14 @@ from pathlib import Path
 
 mainDatabase = { }
 
+# Function menu() is literally just a menu, sadly using if, elif and else statements
 def menu():
     print("Menu:")
     print("1 : Save current Session")
     print("2 : Define new Material")
     print("3 : Search for Material")
     print("4 : Check Material Data")
+    print("5 : Reserve Material")
     rawIn = input("Selection: ")
     intIn = int(rawIn)
     #Implement all Menu items here!
@@ -31,10 +33,13 @@ def menu():
         searchMat()
     elif intIn == 4:
         checkMat()
+    elif intIn == 5:
+        reserveMat()
     else:
         print("Invalid Input!")
         menu()
 
+# Function save() saves the mainDatabase dict to Material.json
 def save():
     Data = mainDatabase
     file = open("Material.json", "w")
@@ -43,12 +48,14 @@ def save():
     file.close()
     menu()
 
+# Function searchMat() looks for a given substring within mainDatabase dict and prints out all appropriate results.
 def searchMat():
     SearchKey = input("Search for: ")
     Result = dict(filter(lambda item: SearchKey in item[0], mainDatabase.items()))
     print("Results: " + str(Result))
     menu()
 
+# Function checkMat() looks up a material and prints all the lotNr dicts availables.
 def checkMat():
     material = input("Name: ")
     if not material in mainDatabase:
@@ -60,6 +67,8 @@ def checkMat():
     print(subdict)
     menu()
 
+# Function newMat() sets up new Materials, both totally new types and already existing types with new LotNrs, saves them
+# in the appropriate dictionary file
 def newMat():
     name = input("Name: ")
     matType = input("Material Type: ")
@@ -70,7 +79,7 @@ def newMat():
         newFileName = "materials/" + name + ".json"
         mainDatabase[name] = {"File": newFileName}
         matDB = {}
-        matDB[lotNr] = {"Type": matType, "Colour": colour, "Amount": amount}
+        matDB[lotNr] = {"Type": matType, "Colour": colour, "AmountAvailable": amount, "AmountReserved": "0", "TotalAmount": amount}
         file = open(newFileName, "w")
         json.dump(matDB, file, indent = 1)
         file.flush()
@@ -79,13 +88,27 @@ def newMat():
         file = mainDatabase[name]["File"]
         with open(file) as tempDB:
             matDB = json.load(tempDB)
-        matDB[lotNr] = {"Type": matType, "Colour": colour, "Amount": amount}
+        matDB[lotNr] = {"Type": matType, "Colour": colour, "AmountAvailable": amount, "AmountReserved": "0", "TotalAmount": amount}
         file = open(file, "w")
         json.dump(matDB, file, indent = 1)
         file.flush()
         file.close()
     menu()
 
+# Function reserveMat() is used to check available Materials and reserve an amount from the smallest reasonably possible
+# Amount available and puts out the LotNr and the Material amount reserved, available and total.
+def reserveMat():
+    material = input("Material: ")
+    if not material in mainDatabase:
+        print("Material not in Database!")
+    else:
+        file = mainDatabase[material]["File"]
+        with open(file) as tempDB:
+            matDB = json.load(tempDB)
+    menu()
+
+# The code below loads all data available from the Material.json, if it exists, else it doesn't do that and starts
+# menu() directly
 file2load = Path("Material.json")
 if file2load.exists() :
     with open("Material.json") as database:
